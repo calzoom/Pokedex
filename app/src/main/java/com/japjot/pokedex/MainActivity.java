@@ -2,6 +2,9 @@ package com.japjot.pokedex;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -42,8 +45,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        TextView text = (TextView) findViewById(R.id.textView);
-
         try {
 
             JSONObject jsonObject = new JSONObject(loadJSONFromAsset());
@@ -52,23 +53,30 @@ public class MainActivity extends AppCompatActivity {
 
             while (keys.hasNext()) {
                 String name = keys.next();
+                String nameofpic;
+                if (name.matches(".*\\s+.*")) {
+                    int space1 = name.indexOf(" ");
+                    int space2 = name.indexOf(" ", space1 + 1);
+                    int space3 = name.indexOf(" ", space2 + 1);
+                    String word1 = name.substring(0, space1);
+                    String word2 = name.substring(space2 + 1, space3);
+                    nameofpic = word1 + "-" + word2;
+                } else {
+                    nameofpic = name;
+                }
+                String pic = "http://img.pokemondb.net/artwork/" + nameofpic.toLowerCase() + ".jpg";
                 JSONObject thispokemon = jsonObject.getJSONObject(name);
 
-                JSONArray types = thispokemon.getJSONArray("Type");
-                int len = types.length();
+                JSONArray thesetypes = thispokemon.getJSONArray("Type");
+                int len = thesetypes.length();
 
-
-                // There is an error here, feeding in the Types as JSON objects is running into a problem
-//                ArrayList<String> typez = new ArrayList<>();
-//                for(int j=0; j<len; j++) {
-//                    JSONObject json = types.getJSONObject(j);
-//                    typez.add(json.getString(name).toString());
-//                }
-
-//                String[] type = typez.toArray(new String[typez.size()]);
-                String[] temp = new String [2];
+                ArrayList<String> types = new ArrayList<>();
+                for(int j=0; j<len; j++) {
+                    types.add(thesetypes.get(j).toString());
+                }
 
                 pokes.add(new Pokemon(
+                        pic,
                         name,
                         thispokemon.getString("#"),
                         thispokemon.getString("Attack"),
@@ -80,19 +88,16 @@ public class MainActivity extends AppCompatActivity {
                         thispokemon.getString("Species"),
                         thispokemon.getString("Speed"),
                         thispokemon.getString("Total"),
-//                        type (** feeding in the Types as JSON error)
-                        temp
+                        types
                 ));
-
-//                Toast.makeText(getApplicationContext(), name,
-//                        Toast.LENGTH_LONG).show();
-
             }
-        }
-        catch(JSONException e){
+        } catch(JSONException e) {
             Log.e("json exception", e.getMessage());
         }
-    }
 
+        RecyclerView recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        recyclerView.setAdapter(new PokemonAdapter(this, pokes));
+    }
 }
 
