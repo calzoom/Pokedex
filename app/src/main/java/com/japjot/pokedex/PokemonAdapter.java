@@ -41,6 +41,10 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonAdapter.CustomVi
         return pokemon.size();
     }
 
+    public void setpoke(ArrayList<Pokemon> newpoke) {
+        pokemon = newpoke;
+    }
+
     class CustomViewHolder extends RecyclerView.ViewHolder {
 
         TextView name, num;
@@ -75,7 +79,7 @@ public class PokemonAdapter extends RecyclerView.Adapter<PokemonAdapter.CustomVi
                     i.putExtra("species", p.species);
                     i.putExtra("speed", p.speed);
                     i.putExtra("total", p.total);
-                    i.putExtra("type", p.type);
+                    i.putExtra("type", String.join(", ", p.type));
                     context.startActivity(i);
                 }
             });

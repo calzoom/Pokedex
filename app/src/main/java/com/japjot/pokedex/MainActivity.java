@@ -1,11 +1,14 @@
 package com.japjot.pokedex;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,12 +20,15 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 
 public class MainActivity extends AppCompatActivity {
 
-    ArrayList<Pokemon> pokes = new ArrayList<>();
+    public static ArrayList<Pokemon> pokes = new ArrayList<>();
+    public PokemonAdapter adapter;
+    Boolean list = true;
 
     public String loadJSONFromAsset() {
         String json = null;
@@ -95,9 +101,35 @@ public class MainActivity extends AppCompatActivity {
             Log.e("json exception", e.getMessage());
         }
 
-        RecyclerView recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-        recyclerView.setAdapter(new PokemonAdapter(this, pokes));
+        final RecyclerView recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        adapter = new PokemonAdapter(this, pokes);
+        recyclerView.setAdapter(adapter);
+
+        Button t = findViewById(R.id.toggle);
+        t.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (list) {
+                    recyclerView.setLayoutManager(new GridLayoutManager(MainActivity.this, 4));
+                } else {
+                    recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+                }
+                list = !list;
+            }
+        });
+
+        Button random = findViewById(R.id.random);
+        random.setOnClickListener(new View.OnClickListener() {
+            ArrayList<Pokemon> pokes2 = pokes;
+            @Override
+            public void onClick(View view) {
+                Collections.shuffle(pokes2);
+                adapter.setpoke(new ArrayList<Pokemon>(pokes2.subList(0, 20)));
+            }
+        });
     }
+
 }
 
