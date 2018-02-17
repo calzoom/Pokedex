@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -127,6 +128,38 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Collections.shuffle(pokes2);
                 adapter.setpoke(new ArrayList<Pokemon>(pokes2.subList(0, 20)));
+                recyclerView.setAdapter(adapter);
+            }
+        });
+
+        SearchView search = findViewById(R.id.search);
+        search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                ArrayList<Pokemon> pokes2 = new ArrayList<Pokemon>();
+                for (int i = 0; i < pokes.size(); i++) {
+                    Pokemon thispoke = pokes.get(i);
+                    if (thispoke.name.startsWith(s) || thispoke.num.startsWith(s)) {
+                        pokes2.add(thispoke);
+                    }
+                }
+                adapter.setpoke(pokes2);
+                recyclerView.setAdapter(adapter);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                ArrayList<Pokemon> pokes2 = new ArrayList<Pokemon>();
+                for (int i = 0; i < pokes.size(); i++) {
+                    Pokemon thispoke = pokes.get(i);
+                    if (thispoke.name.startsWith(s) || thispoke.num.startsWith(s)) {
+                        pokes2.add(thispoke);
+                    }
+                }
+                adapter.setpoke(pokes2);
+                recyclerView.setAdapter(adapter);
+                return false;
             }
         });
     }
