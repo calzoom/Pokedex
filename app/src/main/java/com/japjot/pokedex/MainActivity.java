@@ -139,13 +139,13 @@ public class MainActivity extends AppCompatActivity {
                 ArrayList<Pokemon> pokes2 = new ArrayList<Pokemon>();
                 for (int i = 0; i < pokes.size(); i++) {
                     Pokemon thispoke = pokes.get(i);
-                    if (thispoke.name.startsWith(s) || thispoke.num.startsWith(s)) {
+                    if (thispoke.name.startsWith(s) || thispoke.name.toLowerCase().startsWith(s) || thispoke.num.startsWith(s)) {
                         pokes2.add(thispoke);
                     }
                 }
                 adapter.setpoke(pokes2);
                 recyclerView.setAdapter(adapter);
-                return false;
+                return true;
             }
 
             @Override
@@ -153,13 +153,13 @@ public class MainActivity extends AppCompatActivity {
                 ArrayList<Pokemon> pokes2 = new ArrayList<Pokemon>();
                 for (int i = 0; i < pokes.size(); i++) {
                     Pokemon thispoke = pokes.get(i);
-                    if (thispoke.name.startsWith(s) || thispoke.num.startsWith(s)) {
+                    if (thispoke.name.startsWith(s) || thispoke.name.toLowerCase().startsWith(s) || thispoke.num.startsWith(s)) {
                         pokes2.add(thispoke);
                     }
                 }
                 adapter.setpoke(pokes2);
                 recyclerView.setAdapter(adapter);
-                return false;
+                return true;
             }
         });
     }
