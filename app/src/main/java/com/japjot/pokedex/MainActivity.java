@@ -23,7 +23,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -78,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
                 int len = thesetypes.length();
 
                 ArrayList<String> types = new ArrayList<>();
-                for(int j=0; j<len; j++) {
+                for(int j = 0; j < thesetypes.length(); j++) {
                     types.add(thesetypes.get(j).toString());
                 }
 
@@ -156,6 +159,7 @@ public class MainActivity extends AppCompatActivity {
                     pokes2.add(thispoke);
                 }
             }
+            pokes2 = removeDuplicates(pokes2);
             adapter.setpoke(pokes2);
             recyclerView.setAdapter(adapter);
         }
@@ -170,9 +174,10 @@ public class MainActivity extends AppCompatActivity {
                         pokes2.add(thispoke);
                     }
                 }
+                pokes2 = removeDuplicates(pokes2);
                 adapter.setpoke(pokes2);
                 recyclerView.setAdapter(adapter);
-                return true;
+                return false;
             }
 
             @Override
@@ -183,11 +188,25 @@ public class MainActivity extends AppCompatActivity {
                         pokes2.add(thispoke);
                     }
                 }
+                pokes2 = removeDuplicates(pokes2);
                 adapter.setpoke(pokes2);
                 recyclerView.setAdapter(adapter);
-                return true;
+                return false;
             }
         });
+    }
+
+    public ArrayList<Pokemon> removeDuplicates(ArrayList<Pokemon> p) {
+        LinkedHashMap<String, Pokemon> data = new LinkedHashMap<String, Pokemon>();
+        ArrayList<Pokemon> result = new ArrayList<Pokemon>();
+        for (Pokemon item: p) {
+            String name = item.name;
+            if (!data.containsKey(name)) {
+                data.put(name, item);
+            }
+        }
+        result.addAll(data.values());
+        return result;
     }
 
 }
