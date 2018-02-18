@@ -108,8 +108,8 @@ public class MainActivity extends AppCompatActivity {
         adapter = new PokemonAdapter(this, pokes);
         recyclerView.setAdapter(adapter);
 
-        Button t = findViewById(R.id.toggle);
-        t.setOnClickListener(new View.OnClickListener() {
+        Button toggle= findViewById(R.id.toggle);
+        toggle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (list) {
@@ -118,6 +118,15 @@ public class MainActivity extends AppCompatActivity {
                     recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
                 }
                 list = !list;
+            }
+        });
+
+        Button filter = findViewById(R.id.filter);
+        filter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(MainActivity.this, FilterActivity.class);
+                startActivity(i);
             }
         });
 
@@ -132,13 +141,31 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        if (getIntent().hasExtra("camefromfilter")) {
+            Bundle extras = getIntent().getExtras();
+            ArrayList<String> types = (ArrayList<String>) extras.get("types");
+            int minimumattack = extras.getInt("minimumattack");
+            int minimumdefense = extras.getInt("minimumdefense");
+            int minimumhp = extras.getInt("minimumhp");
+            ArrayList<Pokemon> pokes2 = new ArrayList<Pokemon>();
+            for (Pokemon thispoke : pokes) {
+                if (thispoke.type.containsAll(types)
+                        && Integer.parseInt(thispoke.attack) >= minimumattack
+                        && Integer.parseInt(thispoke.defense) >= minimumdefense
+                        && Integer.parseInt(thispoke.hp) >= minimumhp) {
+                    pokes2.add(thispoke);
+                }
+            }
+            adapter.setpoke(pokes2);
+            recyclerView.setAdapter(adapter);
+        }
+
         SearchView search = findViewById(R.id.search);
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
                 ArrayList<Pokemon> pokes2 = new ArrayList<Pokemon>();
-                for (int i = 0; i < pokes.size(); i++) {
-                    Pokemon thispoke = pokes.get(i);
+                for (Pokemon thispoke : pokes) {
                     if (thispoke.name.startsWith(s) || thispoke.name.toLowerCase().startsWith(s) || thispoke.num.startsWith(s)) {
                         pokes2.add(thispoke);
                     }
@@ -151,8 +178,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextChange(String s) {
                 ArrayList<Pokemon> pokes2 = new ArrayList<Pokemon>();
-                for (int i = 0; i < pokes.size(); i++) {
-                    Pokemon thispoke = pokes.get(i);
+                for (Pokemon thispoke : pokes) {
                     if (thispoke.name.startsWith(s) || thispoke.name.toLowerCase().startsWith(s) || thispoke.num.startsWith(s)) {
                         pokes2.add(thispoke);
                     }
